@@ -1,1 +1,1 @@
-# ARCHITETTURA_DEGLI_ELABORATORI
+Esercizi di laboratorio del corso di Architettura degli Elaboratori, scritti in assembly IJVM, il set di istruzioni della macchina a pila (Java Virtual Machine semplificata) eseguita dal processore MIC-1.
