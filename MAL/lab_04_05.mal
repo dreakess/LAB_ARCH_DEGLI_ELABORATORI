@@ -1,0 +1,90 @@
+// ISET 32 bit-mask 
+
+
+// L' istruzione iset utilizza una maschera di 32 bit che segue il codice operativo e applica la maschera all'elemento che si trova 
+// in cima allo stack, forzando ad 1 i bit che sono 1 nella mask e lasciando inalterati gli altri 
+
+
+// iset1 pc = pc +1  //legge il secondo byte di mask
+// iset2 h = mbru << 8  // trasla il primo byte in H di un byte (a destra)
+// iset 3 pc = pc +1; fetch //legge il terzo byte
+// iset4 h = h or mbru << 8 //forma la maschera con il primo e il secondo byte (traslato di 8 da destra)
+// iset5 pc = pc  + 1; fetch //lettura del quarto byte
+// iset6 h = h or mbru << 8  // forma la maschera formata dal primo, secondo e terzo byte
+//iset7 h = h or mbru  //completamento della maschera
+//iset8 pc = pc  +1; fetch  //fetch della prox microistruzione (ovvero, prossimo opcode)
+//iset9 mdr = tos= tos or h // OR tra mask e cima stack, aggiorna tos e prepara la scrittura in cima stack
+// iset10 mar = sp; wr; goto (Main1) //sovrascrive il nuovo valore della cima in mdr nello stack pointer, ritorna al Main1
+
+
+// Esercizio 3
+
+// scrivere il microcodice di MIC1, dell'istruzione IDIV, di cui sostituisce i primi due valori in cima allo stack(di cui penultimo 
+// di valore positivo o nullo e ultimo strettamente positivo), con il risultato della loro divisione intera.
+
+// idiv1 mar = sp = sp-1; rd  //dividendo
+// idiv2 h= tos 
+// idiv3 opc=0  // utilizziamo questo registro come contatore 
+// idiv4 mdr = mdr - h; if (N) goto idiv6; else goto idiv5 //dividendo - divisore e verifichiamo se la sottrazione è negativa 
+// idiv5 opc = opc  +1; goto idiv4 
+// idiv6  tos = mdr = opc; wr; goto Main1
+
+
+// uscite di N, Z dell' ALU: 
+
+// N (valore < 0)
+// Z (valore == 0)
+
+//esempio : 
+// cima = 3, sotto-cima = 8
+// 8-3 = 5, opc =0+1
+// 5-3 = 2, opc = 1 + 1 = 2
+// 2-3 = -1, allora ritorno il valore di divisione intera = 2 in mdr tos all'indirizzo della cima dello stack
+
+
+// Esercizio 4
+
+// IMOD, che sostituisce il contenuto delle ultime due parole in cima allo stack, (di cui penultimo di valore positivo o null
+// e l'ultimo strettamente positivo) con il resto della loro divisione.
+
+// 27 MOD 6 = 3 
+
+// imod1 mar=sp = sp -1; rd
+// imod2 h=tos
+// imod3 mdr = mdr - h; if (N) goto imod4; else goto imod3
+// imod4 tos = mdr = mdr + h; wr; goto Main1 
+
+// esempio:
+//
+// cima = 3(divisore), sotto-cima = 8(dividendo)
+// 8-3 = 5;
+// 5-3 = 2;
+// 2-3 = -1; (valore negativo)
+// -1 + 3 (divisore) = 2 (ovvero il suo resto)
+
+// Esercizio 5 
+
+// verificare casi particolari di questi esercizi, usando il divisore con segno o anche nullo e verificare se sono corretti o meno
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

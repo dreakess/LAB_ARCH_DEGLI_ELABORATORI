@@ -1,0 +1,28 @@
+.constant
+      objref 0xcafe
+.end-constant
+.main
+.var
+value
+.end-var
+      LDC_W objref
+      BIPUSH 10
+      BIPUSH 4
+      INVOKEVIRTUAL MULT4
+      ISTORE value
+      HALT
+.end-main
+.method MULT4(x,y)
+.var
+.end-var
+      ILOAD y
+      IFEQ quadruplica
+      ILOAD x
+      GOTO return
+quadruplica: ILOAD x
+             DUP
+             IADD
+             DUP
+             IADD
+return: IRETURN
+.end-method

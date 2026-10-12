@@ -1,0 +1,34 @@
+.constant
+miacostante  0x25 //push nell'area costanti del valore 25
+objref 0xCAFE
+.end-constant
+
+.main   //stat of program
+.var  //local variables for main program
+a
+b
+total     //at the end: total = a+b
+.end-var
+start: LDC_W miacostante  //initialize var b to the value of "miacostante" + 0x20
+       ISTORE a
+       LDC_W miacostante
+       BIPUSH 0x20 //push del valore 20
+       IADD
+       ISTORE b
+       LDC_W objref //parola vuota da passare come parametro
+       ILOAD a  //passaggio dei successivi due parametri a e b
+       ILOAD b //secondo parametro
+       INVOKEVIRTUAL somma  //chiamo il metodo somma
+       ISTORE total
+.end-main
+.method somma(x,y)
+.var
+somma-tot
+.end-var
+       ILOAD x
+       ILOAD y
+       IADD
+       ISTORE somma-tot
+       ILOAD somma-tot
+       IRETURN //funzione che ritorna il valore del metodo in cima allo stack
+.end-method

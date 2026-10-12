@@ -1,0 +1,24 @@
+.consant
+value 253
+obref 0xCAFE
+.end-consant
+.main
+	LDC_W objref
+	INVOKEVIRTUAL f
+	HALT
+.end-main	
+
+.method f()
+.var
+.end-var
+//BIPUSH 253 problema di rapp. in complemento a 2
+//soluzione
+BIPUSH 127 //inserisco nello stack il valore 127, ovvero il valore massimo
+DUP	
+IADD	//la somma mi da 254, 2^n-1 
+BIPUSH 1 
+ISUB	//254-1
+IRETURN 
+.end-method
+
+

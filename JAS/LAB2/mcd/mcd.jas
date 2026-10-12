@@ -1,0 +1,38 @@
+.constant
+      objref 0xcafe
+.end-constant
+.main
+.var
+risultato
+.end-var
+      LDC_W objref
+      BIPUSH 5
+      BIPUSH 21
+      INVOKEVIRTUAL MCD
+      ISTORE risultato
+      HALT
+.end-main
+.method MCD(a,b)
+.var
+.end-var
+evalcond:      ILOAD a
+      ILOAD b
+      ISUB
+      IFEQ vero
+      ILOAD a
+      ILOAD b
+      ISUB
+      IFLT seconda
+      ILOAD a
+      ILOAD b
+      ISUB
+      ISTORE a
+      GOTO evalcond
+seconda: ILOAD b
+         ILOAD a
+         ISUB
+         ISTORE b
+         GOTO evalcond
+vero: ILOAD a
+return: IRETURN
+.end-method

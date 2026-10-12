@@ -1,0 +1,15 @@
+.constant
+.end -constant
+
+.main
+.var
+i
+j
+.end-var
+
+		bipush 3
+		iload j
+		iadd
+		istore i
+		halt
+.end-main

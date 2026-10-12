@@ -1,0 +1,57 @@
+.constant
+miacostante 0x25
+incremento 0x20
+iterations 0x02
+obref OxCAFE
+.end-constant
+
+.main
+.var
+base
+inc
+index
+result
+.end-var
+
+start:
+        LDC_W miacostante
+        ISTORE base //base = 25
+        LDC_W iterations
+        ISTORE index  //index= 20
+        LDC_W objref  //parola vuota, puntatore necessario per invocare metodo INVOKEVIRTUAL
+        ILOAD index //caricamento dei parametri necessari
+        ILOAD inc //secondo parametro
+        INVOKEVIRTUAL mul //invocazione funzione
+        ISTORE result
+        ILOAD result
+        ILOAD base
+        IADD
+        ISTORE result
+.end-main
+
+.method mul(x, y)
+.var
+prodotto
+i
+.end-var
+        BIPUSH 0
+        ISTORE prodotto
+        ILOAD x
+        DUP
+        IADD
+        ILOAD prodotto
+        ILOAD y
+        ISTORE i
+        BIPUSH 1
+        ISUB
+        ILOAD i
+        LDC_W objref //ricorsione
+        ILOAD i
+        ILOAD x
+        INVOKEVIRTUAL mul
+        ILOAD x
+        IADD
+        ISTORE prodotto
+        ILOAD prodotto
+        IRETURN
+.end-method

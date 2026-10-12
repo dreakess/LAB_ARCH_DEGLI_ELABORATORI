@@ -1,0 +1,158 @@
+//immuni(x,k)
+//
+//
+//left_bit=0
+//right_bit=0
+//if k <> 0 then (k != 0) 
+//	right_bit =extract_bit_value(k-1)
+//endif
+//if k <> 31 then (k != 31)
+//	left_bit= extract_bit_value(k+1)
+//endif
+//return left_bit OR right_bit
+
+
+//extract_bit_value(x, pos)
+//
+//mask = create mask(pos) // 000 ..... 1.....00000 in position pos
+//return (x AND mask)?1:0 c-like
+
+//Questo esempio ci permette di estrarre un bit da una strigna di bit 
+
+//questo metodo ci permette di generare la maschera, ovvero sfruttiamo il fatto di poter shiftare 
+//un bit soltanto ovver il valore 1 in posizione 0 a destra
+
+
+//create mask(pos)
+//
+// mask = 1  00000....00001 
+//FOR i=1 TO pos STEP 1  ---> for(i=1; i<=pos;i++)
+// mask = 2*mask
+//END FOR
+//return mask
+
+
+//per l'esercizio nibble, qualora volessi estrarre due bit continui in posizioni diverse prese come intervallo
+//posso farlo creando continuamente nuove maschere(con il bit nella posizione interessata), creando nuove maschere
+//e mettendono ogni volta in OR ottengo la stringa voluta
+
+//esempio
+// 1000110..000000 :: interessano i primi 5 bit a partire da sinistra (ovvero 10001)
+// 000000000000001 mask
+// 000000000000000 OR 
+// 000000000000001 risultato OR
+// 
+// 000000000010000 
+// 000000000000001 OR
+// 000000000010001 risultato atteso OR
+// 1000000..000000 mask
+//  
+
+
+.constant
+objref 0xcafe
+.end-constant
+.main
+.var
+result
+.end-var
+	ldc_w objref
+	bipush 8 // 00000000000000000000000000001000 = 8 in in binario
+	bipush 2 //posizione //risultato atteso= 1
+	invokevirtual immuni
+	istore result
+	iload result
+	out
+	halt
+.end-main
+
+.method immuni(x, k)
+.var
+left_bit
+right_bit
+.end-var
+	
+	bipush 0
+	istore left_bit
+	bipush 0	
+	istore right_bit
+	
+	
+	iload k 
+	//if ( k ==0)
+	ifeq case_k_plus_1 //controllo il caso in cui la posizione sia all'estremo dell'intervallo di bit
+			   //in questo caso controllo che la posizione che abbiamo inserito sia la prima
+			   //a partire da sinistra
+			   
+	//else:
+	ldc_w objref
+	iload x 
+	iload k
+	bipush 1
+	isub //controllo allora la posizione immediatamente a destra (l' unica disponibile)
+	invokevirtual extract_bit_value
+	istore right_bit
+	//end-else
+	
+//if-true:	
+case_k_plus_1: 	bipush 31
+		iload k
+		if_icmpeq ret_imm
+		ldc_w objref
+		iload x
+		iload k
+		bipush 1
+		iadd
+		invokevirtual extract_bit_value
+		istore left_bit
+	
+ret_imm:	iload left_bit
+		iload right_bit
+		ior
+		ireturn	
+//end-if-true		
+.end-method
+
+.method mask(pos)
+.var
+i
+result
+.end-var	
+						 bipush 1 //000000000000000000000000000000001 ovvero 1 bit
+						 istore result
+						 bipush 1
+						 istore i
+						 
+cond:					 	 iload pos //i < pos
+						 iload i
+						 isub //pos-i < 0 
+				 		 iflt return
+				 		 
+				 		 iload result
+				 		 dup
+				 		 iadd
+				 		 istore result
+				 		 
+						 iinc i 1 
+						 goto cond //END FOR
+iload result
+return: iload result ireturn 
+.end-method
+
+.method extract_bit_value(x, pos)
+.var
+mask
+.end-var
+						 ldc_w objref
+						 iload pos
+					   	 invokevirtual mask
+					   	 istore mask
+						 
+						 iload mask
+						 iload x
+						 iand
+						 ifeq ret0 // (x AND mask) == 0 
+						 goto ret
+ret0:						 bipush 0
+ret:						 ireturn
+.end-method

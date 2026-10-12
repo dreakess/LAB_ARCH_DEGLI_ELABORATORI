@@ -1,0 +1,37 @@
+.constant
+objref 0xCAFE
+.end-constant
+
+.main
+LDC_W objref
+BIPUSH 3
+INVOKEVIRTUAL stampanibble
+out
+HALT
+.end-main
+
+//VALORI DI ASCII
+//valore esadeciamle, da 97 a 102 a,b,c,d,e,f
+//valore decimale 48, .., 57 [0, ..,9]
+
+.method stampanibble(x) //parametro tra 0 e 15
+.var
+value
+mask
+i	
+.end-var
+	iload x
+	istore value
+	bipush 1
+	istore mask
+	iload mask
+	iload value
+	isub
+cond:	iflt vero
+	ireturn
+vero: 	iload mask	
+	dup
+	iadd
+	istore mask
+	goto cond	
+.end-method

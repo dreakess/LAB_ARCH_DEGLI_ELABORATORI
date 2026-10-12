@@ -1,0 +1,4 @@
+.main
+	PUSH2
+	HALT
+.end-main

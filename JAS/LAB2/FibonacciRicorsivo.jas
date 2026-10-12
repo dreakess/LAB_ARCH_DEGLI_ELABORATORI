@@ -1,0 +1,51 @@
+.constant
+      objref 0xcafe
+.end-constant
+.main
+.var
+risultato
+.end-var
+      LDC_W objref
+      BIPUSH 10
+      INVOKEVIRTUAL fibonacci
+      ISTORE risultato
+      HALT
+.end-main
+.method fibonacci(n)
+.var
+    fib_n_minus_1
+    fib_n_minus_2
+.end-var
+
+      //Fib(1) = 1
+      ILOAD n
+      BIPUSH 1
+      IF_ICMPEQ return_one
+
+      //Fib(2) = 1
+      ILOAD n
+      BIPUSH 2
+      IF_ICMPEQ return_one
+
+      //Fib(n) = F(n-1) + Fib(n-2)
+      LDC_W objref  //invoke with n-1
+      ILOAD n
+      BIPUSH 1
+      ISUB
+      INVOKEVIRTUAL fibonacci
+      ISTORE fib_n_minus_1
+
+      LDC_W objref  //invoke with n-2
+      ILOAD n
+      BIPUSH 2
+      ISUB
+      INVOKEVIRTUAL fibonacci
+      ISTORE fib_n_minus_2
+
+      ILOAD fib_n_minus_1 //load fibonacci(n-1)
+      ILOAD fib_n_minus_2 //load fibonacci(n-2)
+      IADD
+      GOTO return
+return_one: BIPUSH 1
+return: IRETURN
+.end-method

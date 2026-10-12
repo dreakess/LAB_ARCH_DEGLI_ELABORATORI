@@ -1,0 +1,22 @@
+.constant
+miacostante  0x25 //push nell'area costanti del valore 25
+.end-constant
+
+.main   //stat of program
+.var  //local variables for main program
+a
+b
+total     //at the end: total = a+b
+.end-var
+start: LDC_W miacostante  //initialize var b to the value of "miacostante" + 0x20
+       ISTORE a
+       LDC_W miacostante
+       BIPUSH 0x20 //push del valore 20
+       IADD
+       ISTORE b
+       ILOAD a
+       ILOAD b
+       IADD
+       ISTORE total
+       HALT
+.end-main

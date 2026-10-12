@@ -1,0 +1,32 @@
+.constant
+      objref 0xcafe
+.end-constant
+.main
+.var
+result
+.end-var
+      LDC_W objref
+      BIPUSH 1
+      BIPUSH 1
+      BIPUSH 1
+      INVOKEVIRTUAL F
+      ISTORE result
+      HALT
+.end-main
+.method F(x,y,z)
+.var
+temp
+.end-var
+      ILOAD x
+      ILOAD y
+      IAND //questo fa l'and bit a bit di un numero che da esadecimale viene trasformato in quaterni di {0, 1}
+      ISTORE temp
+      ILOAD y
+      ILOAD z
+      IOR //questo fa l'or logico bit a bit
+      ILOAD temp
+      IF_ICMPEQ vero
+      BIPUSH 0
+vero: BIPUSH 1
+return: IRETURN
+.end-method

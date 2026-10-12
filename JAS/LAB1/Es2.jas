@@ -1,0 +1,33 @@
+.constant
+miacostante  0x25 //push nell'area costanti del valore 25
+cmpcostante 0x46 //stessa cosa ma con il valore 46
+.end-constant
+
+.main   //stat of program
+.var  //local variables for main program
+a
+b
+total     //at the end: total = a+b
+.end-var
+start: LDC_W miacostante  //initialize var b to the value of "miacostante" + 0x20
+       ISTORE a
+       LDC_W miacostante
+       BIPUSH 0x20 //push del valore 20
+       IADD
+       ISTORE b
+       ILOAD a
+       ILOAD b
+       IADD
+       DUP //duplico in cima allo stack della somma di a+b
+       ISTORE total
+       LDC_W cmpcostante
+       ISUB
+       IFLT Then //if(total - cmpcostante < 0)
+ else: ILOAD a //parte falsa: decremento di 1 oppure [iinc a -1]
+       BIPUSH 1
+       ISUB
+       ISTORE a
+       goto end
+ Then: iinc a 1 //incremento la var a di 1
+ end:  HALT
+.end-main

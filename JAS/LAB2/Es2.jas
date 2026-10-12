@@ -1,0 +1,32 @@
+.constant
+      objref 0xcafe
+.end-constant
+.main
+.var
+valore
+.end-var
+      LDC_W objref
+      BIPUSH 4
+      BIPUSH 6
+      INVOKEVIRTUAL valoreassoluto
+      ISTORE valore
+      HALT
+.end-main
+.method valoreassoluto(x,y)
+.var
+diffxy
+.end-var
+      ILOAD x
+      ILOAD y
+      ISUB
+      ISTORE diffxy
+      ILOAD diffxy
+      IFLT cambiasegno
+      GOTO return
+cambiasegno:
+      BIPUSH 0
+      ILOAD diffxy
+      ISUB
+      ISTORE diffxy
+return: IRETURN
+.end-method

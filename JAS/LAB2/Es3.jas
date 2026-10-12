@@ -1,0 +1,43 @@
+.constant
+      objref 0xcafe
+.end-constant
+.main
+.var
+risultato
+.end-var
+      LDC_W objref
+      BIPUSH 5
+      INVOKEVIRTUAL Fibonacci
+      ISTORE risultato
+      HALT
+.end-main
+.method Fibonacci(n)
+.var
+prec
+curr
+i
+temp
+.end-var
+          BIPUSH 0
+          ISTORE prec
+          BIPUSH 1
+          ILOAD curr
+          BIPUSH 1
+          ISTORE i
+evalcond: ILOAD n
+          ILOAD i
+          ISUB //n-i
+          IFLT endwhile // if n-i < 0 then while id ended (n>=i)
+          ILOAD prec //temp+prex+curr
+          ILOAD curr
+          IADD
+          ISTORE temp
+          ILOAD curr //prec=curr
+          ISTORE prec
+          ILOAD temp  //curr=temp
+          ISTORE curr
+          IINC i 1 //i++ 
+          GOTO evalcond //loop condition
+endwhile: ILOAD curr
+          IRETURN
+.end-method

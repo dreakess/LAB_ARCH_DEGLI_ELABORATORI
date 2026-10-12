@@ -1,0 +1,33 @@
+.constant
+objref 0xCAFE
+.end-constant
+
+.main
+LDC_W objref
+BIPUSH 3
+BIPUSH 4
+BIPUSH 5
+INVOKEVIRTUAL f
+HALT
+.end-main
+
+.method f(x,y,z)
+.var
+somma
+.end-var
+ILOAD x
+ILOAD Y
+IADD
+ILOAD z
+IADD
+ISTORE somma
+ILOAD somma
+IFEQ ret1 //indirizzo della prox istruzione, sarebbe l'indirizzo presente più valore del prox indirizzo
+ILOAD somma
+IFLT ret0
+ret1: BIPUSH 1
+      GOTO return //goto 27+5 = c indirizzo dell'istruzione successiva
+ret0: BIPUSH 0
+
+return: IRETURN
+.end-method

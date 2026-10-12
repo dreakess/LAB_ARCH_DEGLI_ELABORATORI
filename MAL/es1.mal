@@ -1,0 +1,204 @@
+// ISET 32 bit-mask 
+
+
+// L' istruzione iset utilizza una maschera di 32 bit che segue il codice operativo e applica la maschera all'elemento che si trova 
+// in cima allo stack, forzando ad 1 i bit che sono 1 nella mask e lasciando inalterati gli altri 
+
+// ricordiamo sempre che arriviamo da una Main1
+// quindi, Main, pc = pc +1; fetch; goto  (mbr) --> in questo caso stiamo leggendo l'opcode e poi chiediamo la lettura del primo byte 
+// di operando
+
+
+// iset1 pc = pc +1; fetch  //legge il secondo byte di mask
+
+// iset2 h = mbru << 8  // trasla il primo byte in H di un byte (a destra)
+
+// iset 3 pc = pc +1; fetch //legge il terzo byte
+
+// iset4 h = h or mbru << 8 //forma la maschera con il primo e il secondo byte (traslato di 8 da destra)
+
+// iset5 pc = pc  + 1; fetch //lettura del quarto byte
+
+// iset6 h = h or mbru << 8  // forma la maschera formata dal primo, secondo e terzo byte
+
+//iset7 h = h or mbru  //completamento della maschera
+
+//iset8 pc = pc  +1; fetch  //fetch della prox microistruzione (ovvero, prossimo opcode), ci serve per preparare il ritorno alla Main1
+
+//iset9 mdr = tos= tos or h // OR tra mask e cima stack, aggiorna tos e prepara la scrittura in cima stack
+
+// iset10 mar = sp; wr; goto (Main1) //sovrascrive il nuovo valore della cima in mdr nello stack pointer, ritorna al Main1
+// con il precedente fetch in memoria abbiamo passato in MBR il valore della prossima microistruzione
+
+// Esercizio 2
+// IMUL, sostiuisce il contenuto delle ultime due parole in cima allo (di valore positivo o nullo) con il loro prodotto.
+
+// imul1 mar = sp = sp - 1; rd
+//pop del valore in cima allo stack e read del valore sottostante
+// il valore in cima allo stack si trova nel registro TOS (quindi non perdiamo il valore del secondo operando)
+
+// imul2 h=0 
+// registro temporaneo, lo utilizzo per i calcoli
+
+// imul3 mdr=mdr-1; if (N) goto imul5; else goto imul4
+//valore della read precedente, decremento e verifico se mdr < 0
+
+// imul4 h=h+tos; goto imul3
+
+// eseguo la moltiplicazione, (2 * a) = a + a
+// (3 * a) = (a + a + a)
+// e poi ritorno alla riga imul3 per verificare la condizione di mdr e quindi il contatore
+
+// imul5 tos =mdr;  wr; goto Main1
+// ritorno alla riga 5 e quindi sovrascrivo con la nuova cima dello stack il valore di mdr e scrivo in memoria centrale il valore trovato
+//ritorno alla Main1 (per lettura prossima microistruzione)
+
+
+// Esercizio 3
+
+// scrivere il microcodice di MIC1, dell'istruzione IDIV, di cui sostituisce i primi due valori in cima allo stack(di cui penultimo 
+// di valore positivo o nullo e ultimo strettamente positivo), con il risultato della loro divisione intera.
+
+// idiv1 mar = sp = sp-1; rd  //dividendo
+// idiv2 h= tos 
+// idiv3 opc=0  // utilizziamo questo registro come contatore 
+// idiv4 mdr = mdr - h; if (N) goto idiv6; else goto idiv5 //dividendo - divisore e verifichiamo se la sottrazione è negativa 
+// idiv5 opc = opc  +1; goto idiv4 
+// idiv6  tos = mdr = opc; wr; goto Main1
+
+
+// uscite di N, Z dell' ALU: 
+
+// N (valore < 0)
+// Z (valore == 0)
+
+//esempio : 
+// cima = 3, sotto-cima = 8
+// 8-3 = 5, opc =0+1
+// 5-3 = 2, opc = 1 + 1 = 2
+// 2-3 = -1, allora ritorno il valore di divisione intera = 2 in mdr tos all'indirizzo della cima dello stack
+
+
+// Esercizio 4
+
+// IMOD, che sostituisce il contenuto delle ultime due parole in cima allo stack, (di cui penultimo di valore positivo o null
+// e l'ultimo strettamente positivo) con il resto della loro divisione.
+
+// 27 MOD 6 = 3 
+
+// imod1 mar=sp = sp -1; rd
+// imod2 h=tos
+// imod3 mdr = mdr - h; if (N) goto imod4; else goto imod3
+// imod4 tos = mdr = mdr + h; wr; goto Main1 
+
+// esempio:
+//
+// cima = 3(divisore), sotto-cima = 8(dividendo)
+// 8-3 = 5;
+// 5-3 = 2;
+// 2-3 = -1; (valore negativo)
+// -1 + 3 (divisore) = 2 (ovvero il suo resto)
+
+// Esercizio 5 
+
+// verificare casi particolari di questi esercizi, usando il divisore con segno o anche nullo e verificare se sono corretti o meno
+// esempio idiv(3,0)
+// ovvero prima 3 
+// dopo 0
+
+//  h = 0
+//  mdr = bipush 0 
+// mdr  = mdr - 0 = 0, viene incrementato opc 
+// il programma va in loop in quanto sarà sempre == 0 l'operazione eseguita e non (<0)
+
+
+// Esercizio 6 : scrivere il micro-codice che implementa IFGT, simile alla IFLT  con salto se la cima dello stack è maggiore di 0. 
+// (Esercizio nel mal)
+
+
+// scrivere anche il micro-codive per:
+
+
+
+// IFLE L (<= 0)
+// IFGE L (>= 0)
+// IFICMPNE L (valore1 != valore2)
+// IFICMPLT L (valore1 < valore2) o (valore1 <= valore2)
+// IFICMPGT L (valore1 > valore2) o (valore1 >= valore2)
+
+
+// Esercizio 7
+//
+// COMP2, senza operandi, che sostituisce il top dello stack(non che aggiunge in cima allo stack) con il suo complemento a 2,
+// assumendo che tale microcodice vada a modificare il microinteprete. Si descrivano quindi anche quali modifiche devono
+// essere fatte  al file di configurazione dell'emulatore Mic1MMV e al codice del microinterprete stesso affinchè
+// l' emulatore possa eseguire un programma IJVM (.jas) contenente l'istruzione COMP2. Suggerimento; l'operazione "-"
+// è eseguibile solo sul registro H
+
+
+
+// Esercizio 8
+
+// PUSH2, senza operandi, che scrive in cima allo stack il valore 2(due), assumendo che tale microcodice vada a modificare il
+// microinterprete. Si descrivano  quindi quali modifiche devono essere fatte al file di configurazione dell'emulatore MIc1MMV
+// e al codice del microinteprete stesso affinchè l' emulatore possa eseguire un programma IJVM (.jas) contenente l' istruzione PUSH2
+
+
+// Esercizio 9
+
+// Estendere il micro-inteprete MIC-1 per realizzare l'istruzione ISTORE_1  che non ha operandi e che rimuove la cima dello stack
+// scrivendone il valore nella variabile locale di scostamento 1 da LV.
+
+// Esercizio 10
+
+// IDEC Varnum, che sottrae alla variabile varnum la cima dello stack (che non viene rimossa).
+// Scrivere il codice MAL, 
+
+
+// Esercizio Fibonacci
+
+//  Fib(1) = 1
+
+// Fib(2) = 1
+
+// Fib(n) = Fib(n -1) + Fib(n+2), per n >=2
+
+// fib1 opc =0 //inizializza la sequenza di fibonacci per n =0
+// fib2 h=1 // ... per n =1
+// fib3 tos = tos -1; if (Z) goto fib7; else goto fib4 //decrementa e controlla la cima == 0
+// fib4 mdr = h // mdr contiene la sommatoria dei termini
+// fib5 h = h + opc 
+// fib6 opc = mdr; goto fib3 //sovrascriviamo opc con mdr 
+// fib7 mar = sp
+// fib8 mdr = tos = h, wr; goto  
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
